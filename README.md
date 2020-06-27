@@ -7,11 +7,11 @@ Given the dimensions of the pressure vessel, the material strength, and the appl
 * matplotlib (used in incomplete features)
 
 # Usage
-For direct use of the `pressurevessel` class, you can import the class:
+For direct use of the `PressureVessel` class, you can import the class:
 ```python
 from pressurevessels import PressureVessel
 ```
-To use the GUI from tkinter, import the module and create:
+To use the GUI from tkinter, import the module, create a tkinter instance, and call `PV_GUI`:
 ```python
 root = tk.Tk()
 root.title('Pressure Vessels')
