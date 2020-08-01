@@ -17,8 +17,7 @@ v = Vessel(pExt, pInt, OD, ID, yieldstress, deratedyieldstress)
 ```
 
 To use the GUI from tkinter, you can execute the module with 
-```python -m pressurevessels
-```
+`python -m pressurevessels`
 
 # Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
