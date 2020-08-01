@@ -32,7 +32,7 @@ defaultvalues = (15,0,1.695,1.460,120,116)
 
 
 # Pressure vessel class to handle calculations
-class PressureVessel():
+class Vessel():
     '''A class to keep together the design parameters and the analysis methods
 
     '''
@@ -173,7 +173,7 @@ class PV_GUI(tk.Frame):
         self.configure(background='azure')
 
         # Create a vessel instance for the calculations
-        self.vessel = PressureVessel(*self.defaultvalues)
+        self.vessel = Vessel(*self.defaultvalues)
 
         # Create the input entry fields
         inputframe = tk.Frame(self, background=self['background'])
@@ -399,7 +399,7 @@ def plot_range(ID_min, ID_max, OD_min, OD_max):
     # Create a numpy-compatible function from the check_diameters() function
     vector_check_diameters = np.vectorize(check_diameters)
     # Initialize a vessel to use
-    v = PressureVessel(15, 0, ID_min, OD_min, 120, 116)
+    v = Vessel(15, 0, ID_min, OD_min, 120, 116)
     # Create a meshgrid of the diameter ranges, to calculate all combinations
     ID_grid, OD_grid = np.meshgrid(ID_values, OD_values)
     # Get the safety factors for all the combinations

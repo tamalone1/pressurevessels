@@ -1,4 +1,4 @@
-Use this code to calculate the stresses in cylindrical pressure vessels. A calculator class, `PressureVessel`, and a GUI class, `PV_GUI`, are provided.
+Use this code to calculate the stresses in cylindrical pressure vessels. A calculator class, `Vessel`, and a GUI class, `PV_GUI`, are provided.
 Given the dimensions of the pressure vessel, the material strength, and the applied pressure, the von Mises stresses in the wall are calculated. A safety factor is determined using both the maximum von Mises stress and the average stress between the inner and outer wall surface. The average stress is limited to a smaller proportion of the maximum allowable stress, which requires that vessels with thinner walls have larger margins of safety.
 
 # Dependencies
@@ -7,16 +7,17 @@ Given the dimensions of the pressure vessel, the material strength, and the appl
 * matplotlib (used in incomplete features)
 
 # Usage
-For direct use of the `PressureVessel` class, you can import the class:
+For direct use of the `Vessel` class, you can import the module:
 ```python
-from pressurevessels import PressureVessel
+import pressurevessels
 ```
-To use the GUI from tkinter, import the module, create a tkinter instance, and call `PV_GUI`:
+and create a `Vessel` instance:
 ```python
-root = tk.Tk()
-root.title('Pressure Vessels')
-PV_GUI(root).grid(row=0, column=0, padx=2, pady=2)
-root.mainloop()
+v = Vessel(pExt, pInt, OD, ID, yieldstress, deratedyieldstress)
+```
+
+To use the GUI from tkinter, you can execute the module with 
+```python -m pressurevessels
 ```
 
 # Contributing
