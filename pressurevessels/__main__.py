@@ -1,7 +1,7 @@
 # make the module executable
 # at which point, the GUI version is run
 import tkinter as tk
-from .PressureVessels import PV_GUI
+from .gui import PV_GUI
 
 root = tk.Tk()
 root.title('Pressure Vessels')
