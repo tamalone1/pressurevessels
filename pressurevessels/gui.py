@@ -5,7 +5,9 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import tkinter as tk
+import numpy as np
 import matplotlib.pyplot as plt
+from .PressureVessels import Vessel
 
 # Set plt dpi
 plt.rcParams['figure.dpi'] = 280

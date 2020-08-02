@@ -8,15 +8,14 @@ Copyright (c) 2020 tamalone1
 import math
 import numpy as np
 
-# Pressure vessel class to handle calculations
-class Vessel():
-    '''A class to keep together the design parameters and the analysis methods
 
+class Vessel():
+    '''A cylindrical vessel subjected to internal and external pressure
     '''
+
     def __init__(self, pExt, pInt, OD, ID, yieldstress, deratedyieldstress):
         ''' Set the vessel's design parameters, and calculate the stresses,
-        safetyfactors, and pressure ratings'''
-        # Design parameters (inputs)
+        safety factors, and pressure ratings'''
         self.pExt = pExt
         self.pInt = pInt
         self.OD = OD
@@ -25,10 +24,8 @@ class Vessel():
         self.deratedyieldstress = deratedyieldstress
 
         # Set a flag if the net pressure is external
-        if self.pExt > self.pInt:
-            self.external = True
-        else:
-            self.external = False
+        self.external = (self.pExt > self.pInt)
+
         # Call all of the calculation methods
         self.calculate()
 
@@ -89,9 +86,9 @@ class Vessel():
         yieldstress = self.yieldstress
         deratedyieldstress = self.deratedyieldstress
         self.SF_room = min(self._safetyfactor(maxstress, yieldstress),
-                                    self._safetyfactor(averagestress, yieldstress*self.k))
+                           self._safetyfactor(averagestress, yieldstress*self.k))
         self.SF_derated = min(self._safetyfactor(maxstress, deratedyieldstress),
-                                       self._safetyfactor(averagestress, deratedyieldstress*self.k))
+                              self._safetyfactor(averagestress, deratedyieldstress*self.k))
 
     def get_maxpressures(self):
         '''Calculate the maximum pressures.
