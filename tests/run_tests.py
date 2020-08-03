@@ -6,22 +6,55 @@ Copyright (c) 2020 tamalone1
 """
 
 import unittest
+from pressurevessels.PressureVessels import Vessel
 
-class TestStringMethods(unittest.TestCase):
+class Test_Vessel(unittest.TestCase):
+    ''' Subclass of TestCase, which is executed by unittest.main
 
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
+    Each test is a method with a name starting with 'test'.
+    The setUp method is run prior to each test.
+    The tearDown method is run after each test.
+    '''
 
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
+    def setUp(self):
+        defaultvalues = (15, 0, 1.695, 1.460, 120, 116)
+        test_vessel = Vessel(*defaultvalues)
 
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
+    def tearDown(self):
+        pass
+
+    def test_func1(self):
+        pass
+
+    def test_func2(self):
+        pass
+
+    def test_func3(self):
+        pass
+
+
+class Test_GUI(unittest.TestCase):
+    ''' Subclass of TestCase, which is executed by unittest.main
+
+    Each test is a method with a name starting with 'test'.
+    The setUp method is run prior to each test.
+    The tearDown method is run after each test.
+    '''
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_func1(self):
+        pass
+
+    def test_func2(self):
+        pass
+
+    def test_func3(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
