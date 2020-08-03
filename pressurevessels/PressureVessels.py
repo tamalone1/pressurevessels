@@ -4,7 +4,6 @@ MIT License
 
 Copyright (c) 2020 tamalone1
 """
-
 import math
 import numpy as np
 

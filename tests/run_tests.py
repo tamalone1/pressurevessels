@@ -17,20 +17,16 @@ class Test_Vessel(unittest.TestCase):
     '''
 
     def setUp(self):
-        defaultvalues = (15, 0, 1.695, 1.460, 120, 116)
-        test_vessel = Vessel(*defaultvalues)
+        self.defaultvalues = (15, 0, 1.695, 1.460, 120, 116)
+        self.test_vessel = Vessel(*self.defaultvalues)
 
     def tearDown(self):
         pass
 
-    def test_func1(self):
-        pass
-
-    def test_func2(self):
-        pass
-
-    def test_func3(self):
-        pass
+    def test_vonmises(self):
+        vm = self.test_vessel._vonmises
+        self.assertEqual(vm(80,80,0), 80)
+        self.assertEqual(vm(80,-80,80), 160)
 
 
 class Test_GUI(unittest.TestCase):
@@ -47,14 +43,6 @@ class Test_GUI(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_func1(self):
-        pass
-
-    def test_func2(self):
-        pass
-
-    def test_func3(self):
-        pass
 
 if __name__ == '__main__':
     unittest.main()
