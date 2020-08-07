@@ -102,20 +102,26 @@ class Vessel():
     def modify_parameters(self, *, pExt=None, pInt=None, OD=None, ID=None,
                           yieldstress=None, deratedyieldstress=None):
         '''Change any of the parameters, and recalculate everything'''
-        # For each keyword argument, if a new value is not passed, use the old
-        # value:
-        if pExt is None:
-            pExt = self.pExt
-        if pInt is None:
-            pInt = self.pInt
-        if OD is None:
-            OD = self.OD
-        if ID is None:
-            ID = self.ID
-        if yieldstress is None:
-            yieldstress = self.yieldstress
-        if deratedyieldstress is None:
-            deratedyieldstress = self.deratedyieldstress
+        # For each keyword argument, if a new value is passed, update the 
+        # associated parameter
+        if pExt:
+            self.pExt = pExt
+        if pInt:
+            self.pInt = pInt
+        if OD:
+            self.OD = OD
+        if ID:
+            self.ID = ID
+        if yieldstress:
+            self.yieldstress = yieldstress
+        if deratedyieldstress:
+            self.deratedyieldstress = deratedyieldstress
 
-        # Call the init function again with the modified parameters included
-        self.__init__(pExt, pInt, OD, ID, yieldstress, deratedyieldstress)
+        # Set a flag if the net pressure is external
+        self.external = (self.pExt > self.pInt)
+        # Call all of the calculation methods
+        self.calculate()
+
+    def change_units(self):
+        ''' Convert the vessel parameters to another unit system.'''
+        pass
