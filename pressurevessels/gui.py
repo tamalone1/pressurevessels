@@ -5,12 +5,12 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import tkinter as tk
-import numpy as np
-import matplotlib.pyplot as plt
+# import numpy as np
+# import matplotlib.pyplot as plt
 from .PressureVessels import Vessel
 
 # Set plt dpi
-plt.rcParams['figure.dpi'] = 280
+# plt.rcParams['figure.dpi'] = 280
 
 # GUI class to create and manage the GUI
 class PV_GUI(tk.Frame):
@@ -249,7 +249,7 @@ def check_diameters(vessel, new_ID, new_OD):
         vessel.modify_parameters(ID=new_ID, OD=new_OD)
         return vessel.SF_room
 
-
+'''
 def plot_range(ID_min, ID_max, OD_min, OD_max):
     """ Calculate the room-temperature safety factor for ID and OD pairs across
     the given ranges.
@@ -273,3 +273,4 @@ def plot_range(ID_min, ID_max, OD_min, OD_max):
     plt.clabel(c)
     # Show plot
     plt.show()
+'''

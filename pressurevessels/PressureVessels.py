@@ -5,8 +5,6 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import math
-import numpy as np
-
 
 class Vessel():
     '''A cylindrical vessel subjected to internal and external pressure
