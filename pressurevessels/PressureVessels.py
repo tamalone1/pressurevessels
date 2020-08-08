@@ -20,9 +20,6 @@ class Vessel():
         self.yieldstress = yieldstress
         self.deratedyieldstress = deratedyieldstress
 
-        # Set a flag if the net pressure is external
-        self.external = (self.pExt > self.pInt)
-
         # Call all of the calculation methods
         self.calculate()
 
@@ -53,6 +50,8 @@ class Vessel():
 
     def calculate(self):
         ''' Update the stresses, safety factors, and pressure ratings.'''
+        # Set a flag if the net pressure is external
+        self.external = (self.pExt > self.pInt)
         self.get_stresses()
         self.get_safetyfactors()
         self.get_maxpressures()
@@ -117,8 +116,6 @@ class Vessel():
         if deratedyieldstress:
             self.deratedyieldstress = deratedyieldstress
 
-        # Set a flag if the net pressure is external
-        self.external = (self.pExt > self.pInt)
         # Call all of the calculation methods
         self.calculate()
 
