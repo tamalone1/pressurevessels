@@ -5,10 +5,17 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import math
+from .conversions import VesselParameter
 
 class Vessel():
     '''A cylindrical vessel subjected to internal and external pressure
     '''
+    pExt = VesselParameter('pressure')
+    pInt = VesselParameter('pressure')
+    OD = VesselParameter('length')
+    ID = VesselParameter('length')
+    yieldstress = VesselParameter('pressure')
+    deratedyieldstress = VesselParameter('pressure')
 
     def __init__(self, pExt, pInt, OD, ID, yieldstress, deratedyieldstress):
         ''' Set the vessel's design parameters, and calculate the stresses,
@@ -19,6 +26,7 @@ class Vessel():
         self.ID = ID
         self.yieldstress = yieldstress
         self.deratedyieldstress = deratedyieldstress
+        self.units = 'US'
 
         # Call all of the calculation methods
         self.calculate()
@@ -119,6 +127,6 @@ class Vessel():
         # Call all of the calculation methods
         self.calculate()
 
-    def change_units(self):
+    def change_units(self, system):
         ''' Convert the vessel parameters to another unit system.'''
-        pass
+        self.units = system
