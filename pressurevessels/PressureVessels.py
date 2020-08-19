@@ -5,17 +5,17 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import math
-from .conversions import VesselParameter
+# from .conversions import VesselParameter
 
 class Vessel():
     '''A cylindrical vessel subjected to internal and external pressure
     '''
-    pExt = VesselParameter('pressure')
-    pInt = VesselParameter('pressure')
-    OD = VesselParameter('length')
-    ID = VesselParameter('length')
-    yieldstress = VesselParameter('pressure')
-    deratedyieldstress = VesselParameter('pressure')
+    # pExt = VesselParameter('pressure')
+    # pInt = VesselParameter('pressure')
+    # OD = VesselParameter('length')
+    # ID = VesselParameter('length')
+    # yieldstress = VesselParameter('pressure')
+    # deratedyieldstress = VesselParameter('pressure')
 
     def __init__(self, pExt, pInt, OD, ID, yieldstress, deratedyieldstress):
         ''' Set the vessel's design parameters, and calculate the stresses,
@@ -130,3 +130,68 @@ class Vessel():
     def change_units(self, system):
         ''' Convert the vessel parameters to another unit system.'''
         self.units = system
+
+    def _bisection_solve(self, function, upper, lower, value):
+        ''' Solve an equation via the bisection method. '''
+        pass
+
+    def _change_with_SF(self, **kwargs):
+        ''' Change parameter(s) and return min safety factor. '''
+        self.modify_parameters(**kwargs)
+        SF = min(self.SF_room, self.SF_derated)
+        return SF
+
+    def minimize_OD(self):
+        ''' Return the smallest OD with safety factor >= 1, all else equal.
+        
+        The vessel will be updated with this new value automatically.'''
+        # Starting value of safety factor
+        SF = min(self.SF_room, self.SF_derated)
+        thickness = self.OD - self.ID
+        new_thickness = thickness/SF
+        # Bisection method: find the optimum point inside a bracketed range
+        a = self.ID+0.001
+        b = self.OD + 2*new_thickness
+        # Until a desired accuracy is reached 
+        while abs(b - a) >= 0.0001:
+            # Get SF for each value of OD and subtract 1.00
+            SF_a = self._change_with_SF(OD=a) - 1.0
+            SF_b = self._change_with_SF(OD=b) - 1.0
+            midpoint = (a+b)/2
+            SF_mid = self._change_with_SF(OD=midpoint) - 1.0
+            print(f'a: {a}, b: {b}, midpoint: {midpoint}, SF: {SF_mid+1}')
+            if SF_a * SF_mid < 0:
+                # Change range to these points
+                b = midpoint
+            else:
+                a = midpoint 
+
+    def minimize_ID(self):
+        ''' Return the largest ID with safety factor >=1, all else equal.
+
+        The vessel will be updated with this new value automatically.'''
+        # Starting value of safety factor
+        SF = min(self.SF_room, self.SF_derated)
+        thickness = self.OD - self.ID
+        new_thickness = thickness/SF
+        # Bisection method: find the optimum point inside a bracketed range
+        a = self.OD-0.001
+        b = max(0, self.OD - 2*new_thickness)
+        # Until a desired accuracy is reached 
+        while abs(b - a) >= 0.0001:
+            # Get SF for each value of OD and subtract 1.00
+            SF_a = self._change_with_SF(ID=a) - 1.0
+            SF_b = self._change_with_SF(ID=b) - 1.0
+            midpoint = (a+b)/2
+            SF_mid = self._change_with_SF(ID=midpoint) - 1.0
+            print(f'a: {a}, b: {b}, midpoint: {midpoint}, SF: {SF_mid+1}')
+            if SF_a * SF_mid < 0:
+                # Change range to these points
+                b = midpoint
+            else:
+                a = midpoint 
+
+if __name__ == '__main__':
+    v = Vessel(15,0,1.695,1.56,120,116)
+    v.minimize_ID()
+    print('ID: ', v.ID)
