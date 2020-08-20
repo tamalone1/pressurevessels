@@ -28,31 +28,44 @@ class Vessel():
         self.deratedyieldstress = deratedyieldstress
         self.units = 'US'
 
+        self._inputs = ('pExt',
+                        'pInt',
+                        'OD',
+                        'ID',
+                        'yieldstress',
+                        'deratedyieldstress')
+
         # Call all of the calculation methods
         self.calculate()
 
-    def _principalstressINT(self):
+    def __repr__(self):
+        r = [f'{parameter}: {getattr(self, parameter)}' for parameter in self._inputs]
+        return '\n'.join(r)
+
+    @staticmethod
+    def _principalstressINT(OD, ID, pInt, pExt):
         """ Calculate the principal stresses on the internal surface."""
-        OD, ID, pInt, pExt = self.OD, self.ID, self.pInt, self.pExt
         hoop = pInt*(OD**2+ID**2)/(OD**2-ID**2) - 2*pExt*(OD**2)/(OD**2-ID**2)
         axial = pInt*(ID**2)/(OD**2-ID**2) - pExt*(OD**2)/(OD**2-ID**2)
         radial = -pInt
         return hoop, axial, radial
 
-    def _principalstressEXT(self):
+    @staticmethod
+    def _principalstressEXT(OD, ID, pInt, pExt):
         """ Calculate the principal stresses on the external surface."""
-        OD, ID, pInt, pExt = self.OD, self.ID, self.pInt, self.pExt
         hoop = 2*pInt*(ID**2)/(OD**2-ID**2) - pExt*(OD**2+ID**2)/(OD**2-ID**2)
         axial = pInt*(ID**2)/(OD**2-ID**2) - pExt*(OD**2)/(OD**2-ID**2)
         radial = -pExt
         return hoop, axial, radial
 
-    def _vonmises(self, s1, s2, s3):
+    @staticmethod
+    def _vonmises(s1, s2, s3):
         """ Calculate von Mises stress given 3 principal stresses."""
         vm = math.sqrt(0.5 * ((s1 - s2)**2 + (s2 - s3)**2 + (s3 - s1)**2))
         return vm
 
-    def _safetyfactor(self, value, allowable):
+    @staticmethod
+    def _safetyfactor(value, allowable):
         """ Calculate the safety factor, compared to the allowable value."""
         return allowable / value
 
@@ -67,8 +80,15 @@ class Vessel():
     def get_stresses(self):
         # Calculate the von Mises stress on the outer and inner surfaces
 
-        vmExt = self._vonmises(*self._principalstressEXT())
-        vmInt = self._vonmises(*self._principalstressINT())
+        vmExt = self._vonmises(*self._principalstressEXT(self.OD,
+                                                         self.ID,
+                                                         self.pInt,
+                                                         self.pExt))
+
+        vmInt = self._vonmises(*self._principalstressINT(self.OD,
+                                                         self.ID,
+                                                         self.pInt,
+                                                         self.pExt))
         maxstress = max(vmExt, vmInt)
         averagestress = (vmExt + vmInt) / 2
 
@@ -159,7 +179,6 @@ class Vessel():
             SF_b = self._change_with_SF(OD=b) - 1.0
             midpoint = (a+b)/2
             SF_mid = self._change_with_SF(OD=midpoint) - 1.0
-            print(f'a: {a}, b: {b}, midpoint: {midpoint}, SF: {SF_mid+1}')
             if SF_a * SF_mid < 0:
                 # Change range to these points
                 b = midpoint
@@ -184,14 +203,8 @@ class Vessel():
             SF_b = self._change_with_SF(ID=b) - 1.0
             midpoint = (a+b)/2
             SF_mid = self._change_with_SF(ID=midpoint) - 1.0
-            print(f'a: {a}, b: {b}, midpoint: {midpoint}, SF: {SF_mid+1}')
             if SF_a * SF_mid < 0:
                 # Change range to these points
                 b = midpoint
             else:
                 a = midpoint 
-
-if __name__ == '__main__':
-    v = Vessel(15,0,1.695,1.56,120,116)
-    v.minimize_ID()
-    print('ID: ', v.ID)
