@@ -5,12 +5,7 @@ MIT License
 Copyright (c) 2020 tamalone1
 """
 import tkinter as tk
-# import numpy as np
-# import matplotlib.pyplot as plt
 from .PressureVessels import Vessel
-
-# Set plt dpi
-# plt.rcParams['figure.dpi'] = 280
 
 # GUI class to create and manage the GUI
 class PV_GUI(tk.Frame):
@@ -32,7 +27,7 @@ class PV_GUI(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.configure(background='azure')
+        # self.configure(background='gainsboro')
 
         # Create a vessel instance for the calculations
         self.vessel = Vessel(*self.defaultvalues)
@@ -41,24 +36,6 @@ class PV_GUI(tk.Frame):
         inputframe = tk.Frame(self, background=self['background'])
         self.ent = self.buildinputtable(inputframe)
         inputframe.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
-
-        # Add radio buttons for units
-        frame2 = tk.Frame(self, background=self['background'])
-        ''' Not yet implemented
-        units = tk.StringVar()
-        units.set('0')
-        radioUS = tk.Radiobutton(frame2, text='US Customary',
-                                 value='US Customary', variable=units,
-                                 width=15, background=self['background'])
-                                # , command=lambda e=self.ent:unitselect(e))
-        radioUS.grid(row=0, column=0, sticky='e')
-        radioMetric = tk.Radiobutton(frame2, text='Metric', value='Metric',
-                                     variable=units, width=15,
-                                     background=self['background'])
-                                    #, command=lambda e=self.ent:unitselect(e))
-        radioMetric.grid(row = 0, column = 1, sticky = 'w')
-        '''
-        frame2.grid(row=0, column=1, padx=10, pady=10, sticky='nsew')
 
         # Create the output table
         outputframe = tk.Frame(self, background=self['background'])
@@ -248,29 +225,3 @@ def check_diameters(vessel, new_ID, new_OD):
     else:
         vessel.modify_parameters(ID=new_ID, OD=new_OD)
         return vessel.SF_room
-
-'''
-def plot_range(ID_min, ID_max, OD_min, OD_max):
-    """ Calculate the room-temperature safety factor for ID and OD pairs across
-    the given ranges.
-    """
-    # Default increment for the diameters
-    step_size = 0.005
-    ID_values = np.arange(ID_min, ID_max + 0.005, step_size)
-    OD_values = np.arange(OD_min, OD_max + 0.005, step_size)
-    # Create a numpy-compatible function from the check_diameters() function
-    vector_check_diameters = np.vectorize(check_diameters)
-    # Initialize a vessel to use
-    v = Vessel(15, 0, ID_min, OD_min, 120, 116)
-    # Create a meshgrid of the diameter ranges, to calculate all combinations
-    ID_grid, OD_grid = np.meshgrid(ID_values, OD_values)
-    # Get the safety factors for all the combinations
-    SF_grid = vector_check_diameters(v, ID_grid, OD_grid)
-    # Plot the calculated safety factors as an image array
-    plt.imshow(SF_grid, cmap=plt.cm.Blues, origin='lower',
-               extent=(ID_min, ID_max, OD_min, OD_max))
-    c = plt.contour(ID_grid, OD_grid, SF_grid, levels=[1], colors='k')
-    plt.clabel(c)
-    # Show plot
-    plt.show()
-'''
