@@ -23,6 +23,10 @@ v = Vessel(pExt, pInt, OD, ID, yieldstress, deratedyieldstress)
 
 To use the GUI from tkinter, you can execute the module with 
 `python -m pressurevessels`
+
+The GUI window resembles the following:
+
+![GUI window example](images/PV_GUI.png)
 ___
 ## Available Methods
 After creating a `Vessel` instance, the following calculated properties are available:
