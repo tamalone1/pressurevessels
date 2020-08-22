@@ -43,11 +43,17 @@ class PV_GUI(tk.Frame):
         outputframe.grid(row=2, column=0, columnspan=2, padx=10, pady=10,
                          sticky='nsew')
 
-        # Insert calculate button
+        # Frame to contain the buttons
         buttonrowframe = tk.Frame(self, background=self['background'])
-        button1 = tk.Button(buttonrowframe, text='Calculate', width=20,
-                            command=self.update_results)
-        button1.pack(side=tk.TOP)
+        # Insert calculate button
+        calc_button = tk.Button(buttonrowframe, text='Calculate', width=20,
+                                command=self.calculate_button_command)
+        calc_button.pack(side=tk.LEFT)
+        # Insert button for minimize_OD
+        minimizeOD_button = tk.Button(buttonrowframe, text='Minimum OD',
+                                      width=20, command=self.minimize_OD)
+        minimizeOD_button.pack(side=tk.LEFT)
+        # Grid the buttons
         buttonrowframe.grid(row=1, column=0, columnspan=2, padx=10, pady=10,
                             sticky='nsew')
 
@@ -167,8 +173,8 @@ class PV_GUI(tk.Frame):
         self.vessel.deratedyieldstress = values['Derated Yield (400F)']
 
     def update_results(self):
-        self.get_entryvalues()
-        self.vessel.calculate()
+        # self.get_entryvalues()
+        # self.vessel.calculate()
 
         # Check the safety factors, and select the display color
         if self.vessel.SF_room < 1.00:
@@ -214,6 +220,27 @@ class PV_GUI(tk.Frame):
         self.outputs['External Pressure for Collapse']['derated'].configure(
                 text='{:,.3f}'.format(self.vessel.maxExtderated))
 
+    def calculate_button_command(self):
+        ''' Get the current inputs, calculate, and update the output table.'''
+        self.get_entryvalues()
+        self.vessel.calculate()
+        self.update_results()
+
+    def minimize_OD(self):
+        ''' Find the minimum OD with safety factor >= 1. 
+        
+        Uses the corresponding vessel method.'''
+        # Get the inputs from the entry boxes and calculate
+        self.get_entryvalues()
+        self.vessel.calculate()
+        # Call the vessel method
+        self.vessel.minimize_OD()
+        # Change the OD entrybox to show the new OD
+        new_OD = self.vessel.OD
+        self.ent['Outer diameter'].delete(0, tk.END)
+        self.ent['Outer diameter'].insert(0, f'{new_OD:.3f}')
+        # Update the results table with the calculated values
+        self.update_results()
 
 def check_diameters(vessel, new_ID, new_OD):
     """ Change the vessel's ID and OD and return the room temp safety factor.

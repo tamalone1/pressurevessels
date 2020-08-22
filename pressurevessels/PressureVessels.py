@@ -151,10 +151,6 @@ class Vessel():
         ''' Convert the vessel parameters to another unit system.'''
         self.units = system
 
-    def _bisection_solve(self, function, upper, lower, value):
-        ''' Solve an equation via the bisection method. '''
-        pass
-
     def _change_with_SF(self, **kwargs):
         ''' Change parameter(s) and return min safety factor. '''
         self.modify_parameters(**kwargs)
@@ -208,3 +204,9 @@ class Vessel():
                 b = midpoint
             else:
                 a = midpoint 
+
+if __name__ == '__main__':
+    v = Vessel(15,0,1.695,1.46,120,116)
+    print(v)
+    v.minimize_ID()
+    print(f'new ID: {v.ID:.3f}')
