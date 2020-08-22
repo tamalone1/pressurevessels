@@ -169,7 +169,7 @@ class Vessel():
         a = self.ID+0.001
         b = self.OD + 2*new_thickness
         # Until a desired accuracy is reached 
-        while abs(b - a) >= 0.0001:
+        while abs(b - a) >= 0.00001:
             # Get SF for each value of OD and subtract 1.00
             SF_a = self._change_with_SF(OD=a) - 1.0
             SF_b = self._change_with_SF(OD=b) - 1.0

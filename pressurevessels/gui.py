@@ -48,11 +48,15 @@ class PV_GUI(tk.Frame):
         # Insert calculate button
         calc_button = tk.Button(buttonrowframe, text='Calculate', width=20,
                                 command=self.calculate_button_command)
-        calc_button.pack(side=tk.LEFT)
+        calc_button.pack(side=tk.LEFT, padx=10)
         # Insert button for minimize_OD
         minimizeOD_button = tk.Button(buttonrowframe, text='Minimum OD',
                                       width=20, command=self.minimize_OD)
-        minimizeOD_button.pack(side=tk.LEFT)
+        minimizeOD_button.pack(side=tk.LEFT, padx=10)
+        # Insert button for minimize_OD
+        maximizeID_button = tk.Button(buttonrowframe, text='Maximum ID',
+                                      width=20, command=self.maximize_ID)
+        maximizeID_button.pack(side=tk.LEFT, padx=10)
         # Grid the buttons
         buttonrowframe.grid(row=1, column=0, columnspan=2, padx=10, pady=10,
                             sticky='nsew')
@@ -239,6 +243,22 @@ class PV_GUI(tk.Frame):
         new_OD = self.vessel.OD
         self.ent['Outer diameter'].delete(0, tk.END)
         self.ent['Outer diameter'].insert(0, f'{new_OD:.3f}')
+        # Update the results table with the calculated values
+        self.update_results()
+
+    def maximize_ID(self):
+        ''' Find the maximum ID with safety factor >= 1. 
+        
+        Uses the corresponding vessel method.'''
+        # Get the inputs from the entry boxes and calculate
+        self.get_entryvalues()
+        self.vessel.calculate()
+        # Call the vessel method
+        self.vessel.minimize_ID()
+        # Change the OD entrybox to show the new OD
+        new_ID = self.vessel.ID
+        self.ent['Inner diameter'].delete(0, tk.END)
+        self.ent['Inner diameter'].insert(0, f'{new_ID:.3f}')
         # Update the results table with the calculated values
         self.update_results()
 
