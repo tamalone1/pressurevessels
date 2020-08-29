@@ -157,18 +157,47 @@ class Vessel():
         SF = min(self.SF_room, self.SF_derated)
         return SF
 
+    @staticmethod
+    def _barlow_thickness(P_diff, diameter, allowable_stress):
+        ''' Estimate the thickness using Barlow's formula.
+        
+        Barlow's formula is a common method of determining the pressure rating
+        for thin-walled pressure vessels, using one of the diameters, the wall
+        thickness, and the allowable stress. If the wall is thin, the radial 
+        stress is small and can be neglected, so both diameters are not needed.
+        '''
+        thickness = P_diff * diameter / (2 * allowable_stress)
+        return thickness
+
     def minimize_OD(self):
         ''' Return the smallest OD with safety factor >= 1, all else equal.
         
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
         SF = min(self.SF_room, self.SF_derated)
-        thickness = self.OD - self.ID
-        new_thickness = thickness/SF
+        # if the current SF is greater than 1.0, use the current diameters as 
+        # brackets for bisection method
+        a = self.ID + 0.001
+        if SF > 1.0:
+            # Use current diameters as the starting range
+            b = self.OD
+        else:
+            # Use Barlow's method to adjust the thickness
+            # Estimate the upper bound on the wall thickness using Barlow's formula
+            diff_pressure = abs(self.pExt - self.pInt)
+            allowable_stress = min(self.yieldstress, self.deratedyieldstress)
+            new_thickness = self._barlow_thickness(diff_pressure, 
+                                                   self.ID, 
+                                                   allowable_stress)
+            new_OD = self.ID + 2*new_thickness                                 
+            # Check if Barlow's method gives SF < 1
+            new_SF = self._change_with_SF(OD=new_OD)
+            if  new_SF > 1.0:
+                b = new_OD
+            else:
+                b = new_OD + 2*new_thickness/new_SF
+
         # Bisection method: find the optimum point inside a bracketed range
-        a = self.ID+0.001
-        b = self.OD + 2*new_thickness
-        # Until a desired accuracy is reached 
         while abs(b - a) >= 0.00001:
             # Get SF for each value of OD and subtract 1.00
             SF_a = self._change_with_SF(OD=a) - 1.0
@@ -187,12 +216,29 @@ class Vessel():
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
         SF = min(self.SF_room, self.SF_derated)
-        thickness = self.OD - self.ID
-        new_thickness = thickness/SF
+        # if the current SF is greater than 1.0, use the current diameters as 
+        # brackets for bisection method
+        a = self.OD - 0.001
+        if SF > 1.0:
+            # Use current diameters as the starting range
+            b = self.ID
+        else:
+            # Use Barlow's method to adjust the thickness
+            # Estimate the upper bound on the wall thickness using Barlow's formula
+            diff_pressure = abs(self.pExt - self.pInt)
+            allowable_stress = min(self.yieldstress, self.deratedyieldstress)
+            new_thickness = self._barlow_thickness(diff_pressure, 
+                                                   self.OD, 
+                                                   allowable_stress)
+            new_ID = max(0, self.OD - 2*new_thickness)                                 
+            # Check if Barlow's method gives SF < 1
+            new_SF = self._change_with_SF(ID=new_ID)
+            if  new_SF > 1.0:
+                b = new_ID
+            else:
+                b = new_ID + 2*new_thickness/new_SF
+
         # Bisection method: find the optimum point inside a bracketed range
-        a = self.OD-0.001
-        b = max(0, self.OD - 2*new_thickness)
-        # Until a desired accuracy is reached 
         while abs(b - a) >= 0.0001:
             # Get SF for each value of OD and subtract 1.00
             SF_a = self._change_with_SF(ID=a) - 1.0
@@ -204,9 +250,3 @@ class Vessel():
                 b = midpoint
             else:
                 a = midpoint 
-
-if __name__ == '__main__':
-    v = Vessel(15,0,1.695,1.46,120,116)
-    print(v)
-    v.minimize_ID()
-    print(f'new ID: {v.ID:.3f}')
