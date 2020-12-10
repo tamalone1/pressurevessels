@@ -14,15 +14,15 @@ class PV_GUI(tk.Frame):
                    'Internal pressure',
                    'Outer diameter',
                    'Inner diameter',
-                   'Yield stress',
-                   'Derated Yield (400F)')
+                   'Yield stress')
 
     outputfields = ('Average Linear Stress',
                     'Maximum Local Stress',
                     'Internal Pressure for Burst',
                     'External Pressure for Collapse',
                     'Minimum Safety Factor')
-    defaultvalues = (15, 0, 1.695, 1.460, 120, 116)
+                    
+    defaultvalues = (15, 0, 1.695, 1.460, 120)
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -101,17 +101,10 @@ class PV_GUI(tk.Frame):
         # Assemble output table header
         lab = tk.Label(root, width=20, text='Calculated Stress:', anchor='c',
                        font=('Arial 12'), background=self['background'])
-        lab.grid(row=1, column=1, padx=2, pady=2)
+        lab.grid(row=0, column=1, padx=2, pady=2)
         lab = tk.Label(root, width=20, text='Allowable Stress:', anchor='c',
                        font=('Arial 12'), background=self['background'])
-        lab.grid(row=0, column=2, columnspan=2, padx=2, pady=2)
-        lab = tk.Label(root, width=20, text='(room temperature)', anchor='c',
-                       font=('Arial 12'), background=self['background'])
-        lab.grid(row=1, column=2, padx=2, pady=2)
-        lab = tk.Label(root, width=20, text='(derated temperature)',
-                       anchor='c', font=('Arial 12'),
-                       background=self['background'])
-        lab.grid(row=1, column=3, padx=2, pady=2)
+        lab.grid(row=0, column=2, padx=2, pady=2)
 
         # Assemble output table
         outputs = {}
@@ -119,7 +112,7 @@ class PV_GUI(tk.Frame):
             # Store the created labels in a dictionary for later
             outputs[field] = {}
             # Skip the first two rows (already built)
-            currentrow = i + 2
+            currentrow = i + 1
             # First label is the actual field name
             lab = tk.Label(root, text=field+': ', anchor='e',
                            font=('Arial 12'), background=self['background'])
@@ -145,11 +138,6 @@ class PV_GUI(tk.Frame):
             lab.grid(row=currentrow, column=2, padx=2, pady=2)
             # For each field, store the label in a corresponding subfield
             outputs[field]['room'] = lab
-            lab = tk.Label(root, width=20, text='0', anchor='c',
-                           relief=tk.GROOVE, font=('Arial 12'),
-                           background=self['background'])
-            lab.grid(row=currentrow, column=3, padx=2, pady=2)
-            outputs[field]['derated'] = lab
 
         # for each key in the outputs dictionary, the value is a
         # sub-dictionary containing the label objects for each column
@@ -174,7 +162,6 @@ class PV_GUI(tk.Frame):
         self.vessel.OD = values['Outer diameter']
         self.vessel.ID = values['Inner diameter']
         self.vessel.yieldstress = values['Yield stress']
-        self.vessel.deratedyieldstress = values['Derated Yield (400F)']
 
     def update_results(self):
         # self.get_entryvalues()
@@ -186,43 +173,27 @@ class PV_GUI(tk.Frame):
         else:
             roomcolor = '#02BC94'
 
-        if self.vessel.SF_derated < 1.00:
-            deratedcolor = '#ff8888'
-        else:
-            deratedcolor = '#02BC94'
 
         # Get the new results and display them in the output table
         self.outputs['Average Linear Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.averagestress))
         self.outputs['Average Linear Stress']['room'].configure(
                 text='{:,.0f}'.format(self.vessel.yieldstress*self.vessel.k))
-        self.outputs['Average Linear Stress']['derated'].configure(
-                text='{:,.0f}'.format(self.vessel.deratedyieldstress*self.vessel.k))
 
         self.outputs['Maximum Local Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.maxstress))
         self.outputs['Maximum Local Stress']['room'].configure(
                 text='{:,.0f}'.format(self.vessel.yieldstress))
-        self.outputs['Maximum Local Stress']['derated'].configure(
-                text='{:,.0f}'.format(self.vessel.deratedyieldstress))
 
         self.outputs['Minimum Safety Factor']['room'].configure(
                 text='{:,.3f}'.format(self.vessel.SF_room),
                 background=roomcolor,
                 foreground='white')
-        self.outputs['Minimum Safety Factor']['derated'].configure(
-                text='{:,.3f}'.format(self.vessel.SF_derated),
-                background=deratedcolor,
-                foreground='white')
 
         self.outputs['Internal Pressure for Burst']['room'].configure(
                 text='{:,.3f}'.format(self.vessel.maxIntroom))
-        self.outputs['Internal Pressure for Burst']['derated'].configure(
-                text='{:,.3f}'.format(self.vessel.maxIntderated))
         self.outputs['External Pressure for Collapse']['room'].configure(
                 text='{:,.3f}'.format(self.vessel.maxExtroom))
-        self.outputs['External Pressure for Collapse']['derated'].configure(
-                text='{:,.3f}'.format(self.vessel.maxExtderated))
 
     def calculate_button_command(self):
         ''' Get the current inputs, calculate, and update the output table.'''

@@ -15,9 +15,8 @@ class Vessel():
     # OD = VesselParameter('length')
     # ID = VesselParameter('length')
     # yieldstress = VesselParameter('pressure')
-    # deratedyieldstress = VesselParameter('pressure')
 
-    def __init__(self, pExt, pInt, OD, ID, yieldstress, deratedyieldstress):
+    def __init__(self, pExt, pInt, OD, ID, yieldstress):
         ''' Set the vessel's design parameters, and calculate the stresses,
         safety factors, and pressure ratings'''
         self.pExt = pExt
@@ -25,15 +24,14 @@ class Vessel():
         self.OD = OD
         self.ID = ID
         self.yieldstress = yieldstress
-        self.deratedyieldstress = deratedyieldstress
+
         self.units = 'US'
 
         self._inputs = ('pExt',
                         'pInt',
                         'OD',
                         'ID',
-                        'yieldstress',
-                        'deratedyieldstress')
+                        'yieldstress')
 
         # Call all of the calculation methods
         self.calculate()
@@ -108,11 +106,9 @@ class Vessel():
         maxstress = self.maxstress
         averagestress = self.averagestress
         yieldstress = self.yieldstress
-        deratedyieldstress = self.deratedyieldstress
+
         self.SF_room = min(self._safetyfactor(maxstress, yieldstress),
                            self._safetyfactor(averagestress, yieldstress*self.k))
-        self.SF_derated = min(self._safetyfactor(maxstress, deratedyieldstress),
-                              self._safetyfactor(averagestress, deratedyieldstress*self.k))
 
     def get_maxpressures(self):
         '''Calculate the maximum pressures.
@@ -123,11 +119,9 @@ class Vessel():
         differentialpressure = abs(self.pExt - self.pInt)
         self.maxExtroom = self.SF_room * differentialpressure
         self.maxIntroom = self.SF_room * differentialpressure
-        self.maxExtderated = self.SF_derated * differentialpressure
-        self.maxIntderated = self.SF_derated * differentialpressure
 
     def modify_parameters(self, *, pExt=None, pInt=None, OD=None, ID=None,
-                          yieldstress=None, deratedyieldstress=None):
+                          yieldstress=None):
         '''Change any of the parameters, and recalculate everything'''
         # For each keyword argument, if a new value is passed, update the 
         # associated parameter
@@ -141,8 +135,6 @@ class Vessel():
             self.ID = ID
         if yieldstress:
             self.yieldstress = yieldstress
-        if deratedyieldstress:
-            self.deratedyieldstress = deratedyieldstress
 
         # Call all of the calculation methods
         self.calculate()
@@ -154,7 +146,7 @@ class Vessel():
     def _change_with_SF(self, **kwargs):
         ''' Change parameter(s) and return min safety factor. '''
         self.modify_parameters(**kwargs)
-        SF = min(self.SF_room, self.SF_derated)
+        SF = self.SF_room
         return SF
 
     @staticmethod
@@ -174,7 +166,7 @@ class Vessel():
         
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
-        SF = min(self.SF_room, self.SF_derated)
+        SF = self.SF_room
         # if the current SF is greater than 1.0, use the current diameters as 
         # brackets for bisection method
         a = self.ID + 0.001
@@ -185,7 +177,7 @@ class Vessel():
             # Use Barlow's method to adjust the thickness
             # Estimate the upper bound on the wall thickness using Barlow's formula
             diff_pressure = abs(self.pExt - self.pInt)
-            allowable_stress = min(self.yieldstress, self.deratedyieldstress)
+            allowable_stress = self.yieldstress
             new_thickness = self._barlow_thickness(diff_pressure, 
                                                    self.ID, 
                                                    allowable_stress)
@@ -215,7 +207,7 @@ class Vessel():
 
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
-        SF = min(self.SF_room, self.SF_derated)
+        SF = self.SF_room
         # if the current SF is greater than 1.0, use the current diameters as 
         # brackets for bisection method
         a = self.OD - 0.001
@@ -226,7 +218,7 @@ class Vessel():
             # Use Barlow's method to adjust the thickness
             # Estimate the upper bound on the wall thickness using Barlow's formula
             diff_pressure = abs(self.pExt - self.pInt)
-            allowable_stress = min(self.yieldstress, self.deratedyieldstress)
+            allowable_stress = self.yieldstress
             new_thickness = self._barlow_thickness(diff_pressure, 
                                                    self.OD, 
                                                    allowable_stress)
