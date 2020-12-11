@@ -47,7 +47,7 @@ class Test_Vessel(unittest.TestCase):
                         ('pInt', 'pressure'),
                         ('OD', 'length'),
                         ('ID', 'length'),
-                        ('yieldstress', 'pressure')]
+                        ('allowable_stress', 'pressure')]
         if starting_parameters['units'] == 'US':
             # Convert to SI
             self.test_vessel.change_units('SI')

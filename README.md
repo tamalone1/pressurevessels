@@ -27,7 +27,7 @@ from pressurevessels import Vessel
 ```
 and create a `Vessel` instance:
 ```python
-v = Vessel(pExt, pInt, OD, ID, yieldstress, deratedyieldstress)
+v = Vessel(pExt, pInt, OD, ID, allowable_stress)
 ```
 
 To use the GUI from tkinter, you can execute the module with 
@@ -49,17 +49,7 @@ minimum safety factor is 1.0
 
 **Vessel.maxExtroom** : The maximum allowable external pressure, such that the minimum safety factor is 1.0
 
-**Vessel.maxIntderated** : The maximum allowable internal pressure for the 
-derated temperature, such that the minimum safety factor is 1.0
-
-**Vessel.maxExtderated** : The maximum allowable external pressure for the 
-derated temperature, such that the minimum safety factor is 1.0
-
-**Vessel.SF_room** : The safety factor for the vessel at room temperature (not 
-derated)
-
-**Vessel.SF_derated** : The safety factor for the vessel with the strength 
-derated due to temperature
+**Vessel.SF_room** : The safety factor for the vessel at room temperature
 
 ## Minimizing Wall Thickness
 After creating a `Vessel` instance, the wall thickness can be minimized to 

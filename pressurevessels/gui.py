@@ -14,7 +14,7 @@ class PV_GUI(tk.Frame):
                    'Internal pressure',
                    'Outer diameter',
                    'Inner diameter',
-                   'Yield stress')
+                   'Allowable stress')
 
     outputfields = ('Average Linear Stress',
                     'Maximum Local Stress',
@@ -161,7 +161,7 @@ class PV_GUI(tk.Frame):
         self.vessel.pInt = values['Internal pressure']
         self.vessel.OD = values['Outer diameter']
         self.vessel.ID = values['Inner diameter']
-        self.vessel.yieldstress = values['Yield stress']
+        self.vessel.allowable_stress = values['Allowable stress']
 
     def update_results(self):
         # self.get_entryvalues()
@@ -178,12 +178,12 @@ class PV_GUI(tk.Frame):
         self.outputs['Average Linear Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.averagestress))
         self.outputs['Average Linear Stress']['room'].configure(
-                text='{:,.0f}'.format(self.vessel.yieldstress*self.vessel.k))
+                text='{:,.0f}'.format(self.vessel.allowable_stress*self.vessel.k))
 
         self.outputs['Maximum Local Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.maxstress))
         self.outputs['Maximum Local Stress']['room'].configure(
-                text='{:,.0f}'.format(self.vessel.yieldstress))
+                text='{:,.0f}'.format(self.vessel.allowable_stress))
 
         self.outputs['Minimum Safety Factor']['room'].configure(
                 text='{:,.3f}'.format(self.vessel.SF_room),

@@ -14,16 +14,16 @@ class Vessel():
     # pInt = VesselParameter('pressure')
     # OD = VesselParameter('length')
     # ID = VesselParameter('length')
-    # yieldstress = VesselParameter('pressure')
+    # allowable_stress = VesselParameter('pressure')
 
-    def __init__(self, pExt, pInt, OD, ID, yieldstress):
+    def __init__(self, pExt, pInt, OD, ID, allowable_stress):
         ''' Set the vessel's design parameters, and calculate the stresses,
         safety factors, and pressure ratings'''
         self.pExt = pExt
         self.pInt = pInt
         self.OD = OD
         self.ID = ID
-        self.yieldstress = yieldstress
+        self.allowable_stress = allowable_stress
 
         self.units = 'US'
 
@@ -31,7 +31,7 @@ class Vessel():
                         'pInt',
                         'OD',
                         'ID',
-                        'yieldstress')
+                        'allowable_stress')
 
         # Call all of the calculation methods
         self.calculate()
@@ -96,7 +96,7 @@ class Vessel():
 
     def get_safetyfactors(self):
         '''Calculate the minimum safety factors for internal and external pressure
-        Compare average stress to adjusted yield stress, where the adjustment
+        Compare average stress to adjusted allowable_ stress, where the adjustment
         factor is 2/3 for internal pressure or 4/5 for external pressure'''
         if self.external:
             self.k = 0.80
@@ -105,10 +105,10 @@ class Vessel():
 
         maxstress = self.maxstress
         averagestress = self.averagestress
-        yieldstress = self.yieldstress
+        allowable_stress = self.allowable_stress
 
-        self.SF_room = min(self._safetyfactor(maxstress, yieldstress),
-                           self._safetyfactor(averagestress, yieldstress*self.k))
+        self.SF_room = min(self._safetyfactor(maxstress, allowable_stress),
+                           self._safetyfactor(averagestress, allowable_stress*self.k))
 
     def get_maxpressures(self):
         '''Calculate the maximum pressures.
@@ -121,7 +121,7 @@ class Vessel():
         self.maxIntroom = self.SF_room * differentialpressure
 
     def modify_parameters(self, *, pExt=None, pInt=None, OD=None, ID=None,
-                          yieldstress=None):
+                          allowable_stress=None):
         '''Change any of the parameters, and recalculate everything'''
         # For each keyword argument, if a new value is passed, update the 
         # associated parameter
@@ -133,8 +133,8 @@ class Vessel():
             self.OD = OD
         if ID:
             self.ID = ID
-        if yieldstress:
-            self.yieldstress = yieldstress
+        if allowable_stress:
+            self.allowable_stress = allowable_stress
 
         # Call all of the calculation methods
         self.calculate()
@@ -177,7 +177,7 @@ class Vessel():
             # Use Barlow's method to adjust the thickness
             # Estimate the upper bound on the wall thickness using Barlow's formula
             diff_pressure = abs(self.pExt - self.pInt)
-            allowable_stress = self.yieldstress
+            allowable_stress = self.allowable_stress
             new_thickness = self._barlow_thickness(diff_pressure, 
                                                    self.ID, 
                                                    allowable_stress)
@@ -218,7 +218,7 @@ class Vessel():
             # Use Barlow's method to adjust the thickness
             # Estimate the upper bound on the wall thickness using Barlow's formula
             diff_pressure = abs(self.pExt - self.pInt)
-            allowable_stress = self.yieldstress
+            allowable_stress = self.allowable_stress
             new_thickness = self._barlow_thickness(diff_pressure, 
                                                    self.OD, 
                                                    allowable_stress)
