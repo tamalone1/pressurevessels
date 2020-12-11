@@ -12,7 +12,7 @@ from pressurevessels import conversions
 class Test_Vessel(unittest.TestCase):
 
     def setUp(self):
-        self.defaultvalues = (15, 0, 1.695, 1.460, 120, 116)
+        self.defaultvalues = (15, 0, 1.695, 1.460, 120)
         self.test_vessel = Vessel(*self.defaultvalues)
 
     def test_vonmises(self):
@@ -47,8 +47,7 @@ class Test_Vessel(unittest.TestCase):
                         ('pInt', 'pressure'),
                         ('OD', 'length'),
                         ('ID', 'length'),
-                        ('yieldstress', 'pressure'),
-                        ('deratedyieldstress', 'pressure')]
+                        ('yieldstress', 'pressure')]
         if starting_parameters['units'] == 'US':
             # Convert to SI
             self.test_vessel.change_units('SI')
