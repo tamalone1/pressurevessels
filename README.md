@@ -35,7 +35,7 @@ To use the GUI from tkinter, you can execute the module with
 
 The GUI window resembles the following:
 
-![GUI window example](images/PV_GUI.png)
+![GUI window example](images/PV_GUI_v2.png)
 ___
 ## Accessing the results
 After creating a `Vessel` instance, the following calculated properties are available:
