@@ -31,7 +31,7 @@ class Test_Vessel(unittest.TestCase):
         # Check initial value
         self.assertEqual(self.test_vessel.pExt, 15)
         # Take note of the current safety factor
-        sf_0 = self.test_vessel.SF_room
+        sf_0 = self.test_vessel.SF
         # Change external pressure value
         self.test_vessel.modify_parameters(pExt=20)
         # Take note of the current safety factor
@@ -39,7 +39,7 @@ class Test_Vessel(unittest.TestCase):
         # Check that the value changed
         self.assertEqual(self.test_vessel.pExt, 20)
         # Check that the safety factor decreased
-        self.assertLess(self.test_vessel.SF_room, sf_0)
+        self.assertLess(self.test_vessel.SF, sf_0)
 
     def test_change_units(self):
         starting_parameters = self.test_vessel.__dict__
