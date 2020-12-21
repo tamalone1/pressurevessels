@@ -137,7 +137,7 @@ class PV_GUI(tk.Frame):
                            background=self['background'])
             lab.grid(row=currentrow, column=2, padx=2, pady=2)
             # For each field, store the label in a corresponding subfield
-            outputs[field]['room'] = lab
+            outputs[field]['allowable'] = lab
 
         # for each key in the outputs dictionary, the value is a
         # sub-dictionary containing the label objects for each column
@@ -168,32 +168,32 @@ class PV_GUI(tk.Frame):
         # self.vessel.calculate()
 
         # Check the safety factors, and select the display color
-        if self.vessel.SF_room < 1.00:
-            roomcolor = '#ff8888'
+        if self.vessel.SF < 1.00:
+            SF_color = '#ff8888'
         else:
-            roomcolor = '#02BC94'
+            SF_color = '#02BC94'
 
 
         # Get the new results and display them in the output table
         self.outputs['Average Linear Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.averagestress))
-        self.outputs['Average Linear Stress']['room'].configure(
+        self.outputs['Average Linear Stress']['allowable'].configure(
                 text='{:,.0f}'.format(self.vessel.allowable_stress*self.vessel.k))
 
         self.outputs['Maximum Local Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.maxstress))
-        self.outputs['Maximum Local Stress']['room'].configure(
+        self.outputs['Maximum Local Stress']['allowable'].configure(
                 text='{:,.0f}'.format(self.vessel.allowable_stress))
 
-        self.outputs['Minimum Safety Factor']['room'].configure(
-                text='{:,.3f}'.format(self.vessel.SF_room),
-                background=roomcolor,
+        self.outputs['Minimum Safety Factor']['allowable'].configure(
+                text='{:,.3f}'.format(self.vessel.SF),
+                background=SF_color,
                 foreground='white')
 
-        self.outputs['Internal Pressure for Burst']['room'].configure(
-                text='{:,.3f}'.format(self.vessel.maxIntroom))
-        self.outputs['External Pressure for Collapse']['room'].configure(
-                text='{:,.3f}'.format(self.vessel.maxExtroom))
+        self.outputs['Internal Pressure for Burst']['allowable'].configure(
+                text='{:,.3f}'.format(self.vessel.maxInternal))
+        self.outputs['External Pressure for Collapse']['allowable'].configure(
+                text='{:,.3f}'.format(self.vessel.maxExternal))
 
     def calculate_button_command(self):
         ''' Get the current inputs, calculate, and update the output table.'''
@@ -234,7 +234,7 @@ class PV_GUI(tk.Frame):
         self.update_results()
 
 def check_diameters(vessel, new_ID, new_OD):
-    """ Change the vessel's ID and OD and return the room temp safety factor.
+    """ Change the vessel's ID and OD and return the resulting safety factor.
     """
     if new_OD <= new_ID:
         # OD must be larger than ID by any finite amount
@@ -242,4 +242,4 @@ def check_diameters(vessel, new_ID, new_OD):
         return 0
     else:
         vessel.modify_parameters(ID=new_ID, OD=new_OD)
-        return vessel.SF_room
+        return vessel.SF

@@ -107,7 +107,7 @@ class Vessel():
         averagestress = self.averagestress
         allowable_stress = self.allowable_stress
 
-        self.SF_room = min(self._safetyfactor(maxstress, allowable_stress),
+        self.SF = min(self._safetyfactor(maxstress, allowable_stress),
                            self._safetyfactor(averagestress, allowable_stress*self.k))
 
     def get_maxpressures(self):
@@ -117,8 +117,8 @@ class Vessel():
         external and internal), and add the result external pressure (internal
         case) and subtract from the internal pressure (external case).'''
         differentialpressure = abs(self.pExt - self.pInt)
-        self.maxExtroom = self.SF_room * differentialpressure
-        self.maxIntroom = self.SF_room * differentialpressure
+        self.maxExternal = self.SF * differentialpressure
+        self.maxInternal = self.SF * differentialpressure
 
     def modify_parameters(self, *, pExt=None, pInt=None, OD=None, ID=None,
                           allowable_stress=None):
@@ -146,7 +146,7 @@ class Vessel():
     def _change_with_SF(self, **kwargs):
         ''' Change parameter(s) and return min safety factor. '''
         self.modify_parameters(**kwargs)
-        SF = self.SF_room
+        SF = self.SF
         return SF
 
     @staticmethod
@@ -166,7 +166,7 @@ class Vessel():
         
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
-        SF = self.SF_room
+        SF = self.SF
         # if the current SF is greater than 1.0, use the current diameters as 
         # brackets for bisection method
         a = self.ID + 0.001
@@ -207,7 +207,7 @@ class Vessel():
 
         The vessel will be updated with this new value automatically.'''
         # Starting value of safety factor
-        SF = self.SF_room
+        SF = self.SF
         # if the current SF is greater than 1.0, use the current diameters as 
         # brackets for bisection method
         a = self.OD - 0.001
