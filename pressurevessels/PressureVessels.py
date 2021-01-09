@@ -98,17 +98,27 @@ class Vessel():
         '''Calculate the minimum safety factors for internal and external pressure
         Compare average stress to adjusted allowable_ stress, where the adjustment
         factor is 2/3 for internal pressure or 4/5 for external pressure'''
-        if self.external:
-            self.k = 0.80
-        else:
-            self.k = 0.666666
-
+        # if self.external:
+        #     self.k = 0.80
+        # else:
+        #     self.k = 0.666666
+            
         maxstress = self.maxstress
         averagestress = self.averagestress
         allowable_stress = self.allowable_stress
 
-        self.SF = min(self._safetyfactor(maxstress, allowable_stress),
-                           self._safetyfactor(averagestress, allowable_stress*self.k))
+        self.max_averagestress_external = self.allowable_stress * 0.80
+        self.max_averagestress_internal = self.allowable_stress * 0.666666
+
+        self.SF_external = min(self._safetyfactor(maxstress, allowable_stress),
+                               self._safetyfactor(averagestress, self.max_averagestress_external))
+        self.SF_internal = min(self._safetyfactor(maxstress, allowable_stress),
+                               self._safetyfactor(averagestress, self.max_averagestress_internal))
+        
+        if self.external:
+            self.SF = self.SF_external
+        else:
+            self.SF = self.SF_internal
 
     def get_maxpressures(self):
         '''Calculate the maximum pressures.
@@ -117,8 +127,8 @@ class Vessel():
         external and internal), and add the result external pressure (internal
         case) and subtract from the internal pressure (external case).'''
         differentialpressure = abs(self.pExt - self.pInt)
-        self.maxExternal = self.SF * differentialpressure
-        self.maxInternal = self.SF * differentialpressure
+        self.maxExternal = self.SF_external * differentialpressure
+        self.maxInternal = self.SF_internal * differentialpressure
 
     def modify_parameters(self, *, pExt=None, pInt=None, OD=None, ID=None,
                           allowable_stress=None):

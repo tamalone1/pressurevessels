@@ -177,8 +177,14 @@ class PV_GUI(tk.Frame):
         # Get the new results and display them in the output table
         self.outputs['Average Linear Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.averagestress))
+        
+        if self.vessel.external:
+            max_averagestress = self.vessel.max_averagestress_external
+        else:
+            max_averagestress = self.vessel.max_averagestress_internal
+        
         self.outputs['Average Linear Stress']['allowable'].configure(
-                text='{:,.0f}'.format(self.vessel.allowable_stress*self.vessel.k))
+                text='{:,.0f}'.format(max_averagestress))
 
         self.outputs['Maximum Local Stress']['calculated'].configure(
                 text='{:,.1f}'.format(self.vessel.maxstress))
